@@ -1,0 +1,26 @@
+name: Nightly Backup (JSON + ZIP)
+
+on:
+  schedule:
+    - cron: "0 0 * * *"   # codziennie o północy UTC
+  workflow_dispatch: {}    # ręczne uruchomienie przyciskiem
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - name: Install deps
+        run: |
+          npm init -y >/dev/null 2>&1 || true
+          npm install --save-dev jszip fs-extra
+      - name: Run backup script
+        run: node scripts/export_json_zip.js
+      - name: Upload backup artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo-backup
+          path: exports
