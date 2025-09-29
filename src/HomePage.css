@@ -1,0 +1,398 @@
+/* Import ekskluzywnych czcionek */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cormorant Garamond', serif;
+  background: radial-gradient(circle at center, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  color: #ffffff;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Stała gwiazdka w prawym górnym rogu */
+.fixed-star {
+  position: fixed;
+  top: 20px;
+  right: 30px;
+  font-size: 24px;
+  color: #ffd60a;
+  z-index: 1000;
+  animation: starSpin 4s linear infinite;
+  cursor: pointer;
+  text-shadow: 0 0 15px #ffd60a;
+}
+
+@keyframes starSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Sacred Geometry Background */
+.geometry-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.sacred-mandala {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px;
+  height: 800px;
+  opacity: 0.12;
+  animation: rotateGeometry 60s linear infinite;
+}
+
+.mandala-layer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid;
+  border-radius: 50%;
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+.mandala-layer:nth-child(1) {
+  width: 200px;
+  height: 200px;
+  border-color: rgba(255, 214, 10, 0.6);
+  animation-delay: 0s;
+}
+
+.mandala-layer:nth-child(2) {
+  width: 350px;
+  height: 350px;
+  border-color: rgba(224, 170, 255, 0.4);
+  animation-delay: 1s;
+}
+
+.mandala-layer:nth-child(3) {
+  width: 500px;
+  height: 500px;
+  border-color: rgba(255, 255, 255, 0.2);
+  animation-delay: 2s;
+}
+
+.mandala-layer:nth-child(4) {
+  width: 650px;
+  height: 650px;
+  border-color: rgba(255, 214, 10, 0.3);
+  animation-delay: 3s;
+}
+
+/* Sacred Lines */
+.geometry-lines {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+}
+
+.geometry-line {
+  position: absolute;
+  width: 2px;
+  height: 300px;
+  background: linear-gradient(to top, transparent 0%, rgba(255, 214, 10, 0.8) 50%, transparent 100%);
+  top: 50%;
+  left: 50%;
+  transform-origin: bottom center;
+  animation: fadeInOut 8s ease-in-out infinite;
+}
+
+.geometry-line:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); animation-delay: 0s; }
+.geometry-line:nth-child(2) { transform: translate(-50%, -100%) rotate(60deg); animation-delay: 1.33s; }
+.geometry-line:nth-child(3) { transform: translate(-50%, -100%) rotate(120deg); animation-delay: 2.66s; }
+.geometry-line:nth-child(4) { transform: translate(-50%, -100%) rotate(180deg); animation-delay: 4s; }
+.geometry-line:nth-child(5) { transform: translate(-50%, -100%) rotate(240deg); animation-delay: 5.33s; }
+.geometry-line:nth-child(6) { transform: translate(-50%, -100%) rotate(300deg); animation-delay: 6.66s; }
+
+@keyframes rotateGeometry {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 20px currentColor;
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 0 40px currentColor;
+  }
+}
+
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Main Content Container */
+.main-container {
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  padding: 4rem 2rem 2rem 2rem;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+/* Ekskluzywny tytuł z hover effect */
+.brand-logo {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+  background: linear-gradient(135deg, #ffffff 0%, #ffd60a 50%, #e0aaff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+.brand-logo:hover {
+  transform: scale(1.08);
+  letter-spacing: 0.2em;
+  text-shadow:
+    0 0 40px rgba(255, 215, 0, 0.8),
+    0 0 80px rgba(224, 170, 255, 0.6),
+    0 0 120px rgba(255, 255, 255, 0.4);
+  filter: brightness(1.3);
+}
+
+.brand-logo::after {
+  content: '✦';
+  position: absolute;
+  top: -15px;
+  right: -25px;
+  font-size: 0.25em;
+  color: #ffd60a;
+  animation: starSpin 4s linear infinite;
+}
+
+/* Delikatny podtytuł */
+.brand-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Hero Section */
+.hero-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 4rem 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  line-height: 1.3;
+  background: linear-gradient(135deg, #ffffff 0%, #e0aaff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-description {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.1rem, 3vw, 1.3rem);
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 600px;
+  margin-bottom: 3rem;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+/* Feature Cards */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin: 3rem 0;
+  max-width: 1000px;
+}
+
+.feature-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255, 214, 10, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(255, 214, 10, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #ffd60a;
+}
+
+.feature-title {
+  font-family: 'Cinzel', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+.feature-description {
+  font-family: 'Cormorant Garamond', serif;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.6;
+}
+
+/* CTA Section */
+.cta-section {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255, 214, 10, 0.1) 0%, rgba(224, 170, 255, 0.1) 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cta-button {
+  font-family: 'Cinzel', serif;
+  display: inline-block;
+  padding: 1.5rem 3rem;
+  background: linear-gradient(135deg, #ffd60a 0%, #e0aaff 100%);
+  color: #000;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 50px;
+  transition: all 0.4s ease;
+  position: relative;
+  overflow: hidden;
+  letter-spacing: 0.05em;
+}
+
+.cta-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transition: all 0.6s ease;
+  transform: translate(-50%, -50%);
+}
+
+.cta-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.cta-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(255, 214, 10, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .geometry-container {
+    display: none; /* Ukryj geometrię na mobile dla wydajności */
+  }
+
+  .header {
+    padding: 2rem 1rem 1rem 1rem;
+  }
+
+  .hero-section {
+    padding: 2rem 1rem;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+  }
+
+  .fixed-star {
+    top: 15px;
+    right: 15px;
+    font-size: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sacred-mandala,
+  .mandala-layer,
+  .geometry-line,
+  .brand-logo::after,
+  .fixed-star {
+    animation: none;
+  }
+}
