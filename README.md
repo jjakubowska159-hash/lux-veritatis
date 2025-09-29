@@ -1,70 +1,168 @@
-# Getting Started with Create React App
+# lux-veritatis – README (PL, prosto)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**Cel:** szybki start + bezpieczna konfiguracja (frontend + backend + GitHub OAuth).
+**Wersja pliku:** 2025-09-29 13:50:18
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 0) Jak czytać ten plik
+- **FAKT** – sprawdzone i pewne.
+- **HIPOTEZA** – prawdopodobne, ale niepotwierdzone.
+- **WYMAGA WERYFIKACJI** – musisz to sprawdzić u siebie.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 1) Szybki start (kroki 1–2–3)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+1) **Zainstaluj zależności (frontend)**  
+   ```bash
+   npm install
+   ```
 
-### `npm test`
+2) **Uruchom frontend** (FAKT: Create React App używa `npm start`)  
+   ```bash
+   npm start
+   ```
+   Otwórz przeglądarkę: `http://localhost:3000` (FAKT).
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+3) **Uruchom backend** (**FAKT: ścieżka i port**)  
+   W osobnym terminalu:
+   ```bash
+   node src/backend/server.js
+   ```
+   Backend nasłuchuje na porcie **4000** (**FAKT**).
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 2) Wymagane środowisko
+- **Node.js**: zalecane LTS (np. 20.x) (**HIPOTEZA** — jeśli masz inną wersję działającą, zaznacz jako FAKT).
+- **NPM**: aktualna wersja (HIPOTEZA).
+- System: Windows 10/11 – działa (FAKT: CRA wspiera).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 3) Skrypty NPM (frontend)
+- `npm start` – tryb deweloperski (FAKT).
+- `npm run build` – build produkcyjny (FAKT).
+- `npm test` – testy (FAKT).
 
-### `npm run eject`
+Opcjonalnie dodaj skrót do backendu w **package.json** (**HIPOTEZA**):
+```json
+{
+  "scripts": {
+    "server": "node src/backend/server.js",
+    "dev": "concurrently \"npm:start\" \"npm:server\""
+  }
+}
+```
+> Uwaga: wymaga instalacji `concurrently`:
+```bash
+npm i -D concurrently
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+---
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 4) Bezpieczeństwo i logowanie (GitHub OAuth)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 4.1 Tokeny
+- **FAKT:** nie trzymaj tokenów w **localStorage** (ryzyko XSS).
+- **FAKT:** używaj **httpOnly Secure Cookie** + **SameSite=Lax/Strict** na backendzie.
+- **FAKT:** tajne klucze trzymaj w **.env** na backendzie, nie w frontendzie.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 4.2 Zmiany w backendzie (**HIPOTEZA/WERYFIKACJA**)
+- Endpointy do wdrożenia (jeśli brak):
+  - `POST /api/auth/login` – inicjuje OAuth (przekierowanie do GitHub).
+  - `GET /api/auth/callback` – odbiera kod i ustawia cookie sesyjne.
+  - `POST /api/auth/logout` – kasuje sesję (cookie).
 
-## Learn More
+- Przykładowe zmienne `.env` (**HIPOTEZA**):
+  ```env
+  GITHUB_CLIENT_ID=...
+  GITHUB_CLIENT_SECRET=...
+  SESSION_SECRET=zmien_mnie
+  COOKIE_NAME=lux_session
+  COOKIE_SECURE=true
+  COOKIE_SAMESITE=Lax
+  BACKEND_PORT=4000
+  FRONTEND_ORIGIN=http://localhost:3000
+  ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Po zalogowaniu front pobiera dane użytkownika przez **bezpieczne API**:
+  - `GET /api/user` → zwraca `login`, `avatar_url`, itp. (**HIPOTEZA**).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 4.3 Zmiany w frontendzie (**HIPOTEZA**)
+- Zastąp odczyty z `localStorage` wywołaniem do `/api/user`.
+- Dodaj przyciski: **Zaloguj** (link do `/api/auth/login`) i **Wyloguj** (POST `/api/auth/logout`).
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 5) Struktura projektu (**FAKT/HIPOTEZA**)
+Aktualnie najważniejsze pliki:
+```
+/src
+  /backend         ← backend (Node/Express)  (**FAKT**)
+    server.js      (**FAKT**)
+  App.js
+  index.js
+```
+Jeśli masz dodatkowe foldery (`/components`, `/pages`) – uzupełnij (**HIPOTEZA**).
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 6) Deploy (**WYMAGA WERYFIKACJI**)
+- Frontend: build → hosting statyczny (Netlify/Vercel/GitLab Pages).  
+- Backend: VPS/Render/Fly.io/Heroku-konto. Ustaw `.env` i HTTPS.
 
-### Making a Progressive Web App
+Checklist deployu:
+- [ ] HTTPS w backendzie / reverse proxy.
+- [ ] CORS: `origin = FRONTEND_ORIGIN`, `credentials = true`.
+- [ ] Cookie: `httpOnly`, `secure`, `sameSite`.
+- [ ] Logowanie błędów bez wrażliwych danych.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+---
 
-### Advanced Configuration
+## 7) UX: szybkie poprawki
+- Dodaj w navbarze: **Zaloguj / Wyloguj** (FAKT: potrzebne do testów sesji).
+- Dodaj **/profile** z danymi z `/api/user` (avatar + login).
+- Dodaj **Loader** dla stanu „niezalogowany / loguję”.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 8) Troubleshooting
+- **Problem:** „Token znika po odświeżeniu.”  
+  **Rozwiązanie (FAKT):** Używaj cookie sesyjnego httpOnly + `credentials: 'include'` w fetchu.
+- **Problem:** CORS 401/403.  
+  **Rozwiązanie:** Ustaw `Access-Control-Allow-Credentials: true` i właściwy `origin`.
+- **Problem:** `render is not a function` (React 18).  
+  **Rozwiązanie:** użyj `createRoot` w `index.js` (FAKT).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Przykład (FAKT, React 18):
+```js
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App';
 
-### `npm run build` fails to minify
+const root = createRoot(document.getElementById('root'));
+root.render(<App />);
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 9) Dalsze kroki (na dziś)
+**Plan → checklista → 1-2-3**  
+- [x] (1) **FAKT**: ścieżka backendu: `src/backend/server.js`.
+- [x] (2) **FAKT**: port backendu: **4000**.
+- [ ] (3) FRONT: dodać przyciski Loguj/Wyloguj + `/profile` (**HIPOTEZA**).
+- [ ] (4) BACK: dodać `/api/user`, `/api/auth/logout`, cookie httpOnly (**HIPOTEZA**).
+
+---
+
+## 10) Styl współpracy (skrót)
+- Mów do mnie „Yuga”. Prosty PL, bez żargonu.  
+- Oznaczaj **FAKT/HIPOTEZA/WYMAGA WERYFIKACJI**.  
+- Minimalne, gotowe patche. Jeśli fragment – podaj zakres linii.
+
+---
+
+## 11) Licencja
+Internal / projekt prywatny (**HIPOTEZA**).
