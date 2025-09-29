@@ -22,3 +22,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .env
+
+# local notes/secrets
+NOTATKI.txt
+kod do tokena appki.txt
+*.env
+.env.local

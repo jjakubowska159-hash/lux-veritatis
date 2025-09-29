@@ -1,4 +1,5 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+// App.js
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import "./App.css";
 import "./UniversalCard.css";
 
@@ -14,7 +15,7 @@ import Archiwum from "./Archiwum";
 import TestPatrona from "./TestPatrona";
 import ProfilPatrona from "./ProfilPatrona";
 
-// Chat z Istotami (wybór + interfejs rozmowy)
+// Chat z Istotami
 import ChatZIstotami from "./ChatZIstotami";
 import ChatView from "./ChatView";
 
@@ -22,17 +23,15 @@ function App() {
   return (
     <Router>
       <div className="App">
-        {/* Globalna gwiazdka na wszystkich stronach */}
+        {/* Gwiazdka ✦ w prawym górnym rogu */}
         <div className="fixed-star">✦</div>
 
         <Routes>
-          {/* Strona główna */}
+          {/* Strony główne */}
           <Route path="/" element={<HomePage />} />
-
-          {/* Dashboard */}
           <Route path="/dashboard" element={<Dashboard />} />
 
-          {/* Moduły aplikacji */}
+          {/* Moduły */}
           <Route path="/puls-kolektywu" element={<PulsKolektywu />} />
           <Route path="/mapa-ogrodu" element={<MapaOgrodu />} />
           <Route path="/rytualy-panel" element={<RytualyPanel />} />
@@ -43,6 +42,9 @@ function App() {
           {/* Chat z Istotami */}
           <Route path="/chat-z-istotami" element={<ChatZIstotami />} />
           <Route path="/chat/:istotaKey" element={<ChatView />} />
+
+          {/* Catch-all: wszystko inne → Dashboard */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </div>
     </Router>
