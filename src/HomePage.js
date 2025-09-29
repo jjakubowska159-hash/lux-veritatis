@@ -1,7 +1,24 @@
-import { Link } from "react-router-dom";
+// HomePage.js
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect } from "react";
 import './HomePage.css';
 
 export default function HomePage() {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const code = searchParams.get('code');
+  const state = searchParams.get('state');
+
+  useEffect(() => {
+    if (code) {
+      console.log("✅ Odebrano kod OAuth:", code);
+      // 🧠 Tu możesz dodać logikę zapisu kodu / fetch do backendu
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
+    }
+  }, [code, navigate]);
+
   return (
     <>
       {/* Sacred Geometry Background */}
@@ -25,7 +42,10 @@ export default function HomePage() {
       <div className="main-container">
         <header className="header">
           <h1 className="brand-logo">LUX VERITATIS</h1>
-          <p className="brand-subtitle">Don't search. Resonate 🧬<br/>Don't believe. Experience 🧭</p>
+          <p className="brand-subtitle">
+            Don't search. Resonate 🧬<br />
+            Don't believe. Experience 🧭
+          </p>
         </header>
 
         <section className="hero-section">
@@ -36,7 +56,7 @@ export default function HomePage() {
           </p>
 
           <div className="features-grid">
-              <div className="feature-card uc-card">
+            <div className="feature-card uc-card">
               <div className="feature-icon">✦</div>
               <h3 className="feature-title">Analiza Świadomości</h3>
               <p className="feature-description">
@@ -64,7 +84,15 @@ export default function HomePage() {
         </section>
 
         <section className="cta-section">
-          <Link to="/dashboard" className="cta-button">Wchodzisz na własną odpowiedzialność</Link>
+          {code ? (
+            <p style={{ color: '#ffd60a', textAlign: 'center', fontStyle: 'italic' }}>
+              Logowanie zakończone. Przekierowuję do dashboardu...
+            </p>
+          ) : (
+            <Link to="/dashboard" className="cta-button">
+              Wchodzisz na własną odpowiedzialność
+            </Link>
+          )}
         </section>
       </div>
     </>
