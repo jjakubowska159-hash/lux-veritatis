@@ -11,20 +11,29 @@
 # production
 /build
 
-# misc
+# OS-specific
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+Thumbs.db
+desktop.ini
 
+# editor/IDE
+.vscode/
+.idea/
+
+# logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.env
+pnpm-debug.log*
+*.log
 
-# local notes/secrets
+# env files (ignore all, but keep examples/templates)
+.env
+.env.*
+*.env
+!.env.example
+!.env.template
+
+# local notes/secrets (twoje pliki prywatne)
 NOTATKI.txt
 kod do tokena appki.txt
-*.env
-.env.local
