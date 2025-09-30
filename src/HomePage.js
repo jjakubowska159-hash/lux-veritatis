@@ -2,6 +2,8 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import './HomePage.css';
+import HealthBadge from './components/HealthBadge';
+
 
 export default function HomePage() {
   const [searchParams] = useSearchParams();
