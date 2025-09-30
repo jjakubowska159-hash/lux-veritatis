@@ -1,5 +1,5 @@
 // src/ChatZIstotami.js
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ISTOTY from './istotyConfig.js';
 import './FlipCard.css';
