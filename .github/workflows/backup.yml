@@ -18,7 +18,7 @@ jobs:
           npm init -y >/dev/null 2>&1 || true
           npm install --save-dev jszip fs-extra
       - name: Run backup script
-        run: node scripts/export_json_zip.js
+        run: node scripts/export_json_zip.cjs
       - name: Upload backup artifacts
         uses: actions/upload-artifact@v4
         with:
