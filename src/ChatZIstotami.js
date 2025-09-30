@@ -8,7 +8,7 @@ import './App.css';
 
 function ChatZIstotami() {
   // Jedyny stan, jakiego potrzebujemy w tym komponencie
-  const [selectedIstota, setSelectedIstota] = useState(null);
+ // const [selectedIstota, setSelectedIstota] = useState(null);
 
   // Hook do przekierowywania użytkownika na inne strony
   const navigate = useNavigate();

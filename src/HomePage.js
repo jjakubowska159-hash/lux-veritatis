@@ -2,14 +2,14 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect } from "react";
 import './HomePage.css';
-import HealthBadge from './components/HealthBadge.jsx';
+// import HealthBadge from './components/HealthBadge.jsx';
 
 
 export default function HomePage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const code = searchParams.get('code');
-  const state = searchParams.get('state');
+  // const state = searchParams.get('state');
 
   useEffect(() => {
     if (code) {

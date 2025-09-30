@@ -10,7 +10,7 @@ function ChatView() {
   const navigate = useNavigate();
 
   const istota = useMemo(() => ISTOTY[istotaKey], [istotaKey]);
-  const theme = istota?.theme ?? {};
+  // const theme = istota?.theme ?? {};
   const accent = istota?.color ?? "#ffd60a";
 
   const [messages, setMessages] = useState([]);

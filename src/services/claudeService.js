@@ -480,4 +480,5 @@ gabriel: `
  }
 }
 
-export default new ClaudeService();
+const claudeService = new ClaudeService();
+export default claudeService;
