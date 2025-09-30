@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import claudeService from "./services/claudeService";
 import ISTOTY from "./istotyConfig.js";
-import { zapiszRozmowe, odczytajRozmowe } from "./cryptoStorage";
+import { zapiszRozmowe, odczytajRozmowe } from "./cryptoStorage.js";
 
 function ChatView() {
   const { istotaKey } = useParams();
