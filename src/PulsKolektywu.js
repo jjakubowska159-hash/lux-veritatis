@@ -89,14 +89,6 @@ useEffect(() => {
     }
   };
 
-      setPulsData(mockData);
-    } catch (error) {
-      console.error('Błąd pobierania danych Puls Kolektywu:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Funkcja pomocnicza do formatowania liczb z separatorami
   const formatNumber = (num) => {
     return new Intl.NumberFormat('pl-PL').format(num);

@@ -226,8 +226,48 @@ app.post('/api/live-add', (req, res) => {
 });
 
 // --- ENDPOINT DO POBIERANIA STATYSTYK ---
-// 👇 PRZENIESIONY NA ZEWNĄTRZ, NIE W ŚRODKU POST-a
 app.get("/api/stats", (req, res) => {
+  const stats = {
+    ogolnaAktywnosc: {
+      aktywniUzytkownicy:  Math.floor(Math.random() * 500) + 200,  // TODO: realne dane z bazy
+      rozmowy24h:          Math.floor(Math.random() * 1200) + 400, // TODO: liczyć wiadomości z ostatniej doby
+      sredniCzasRozmowy:   Math.floor(Math.random() * 15) + 5,     // TODO: policzyć średnią
+      noweRejestracje:     Math.floor(Math.random() * 50) + 10     // TODO: dane rejestracji
+    },
+    popularnosc: {
+      Luna:    Math.floor(Math.random() * 200) + 50,
+      Melody:  Math.floor(Math.random() * 200) + 50,
+      Gaia:    Math.floor(Math.random() * 200) + 50,
+      Solaris: Math.floor(Math.random() * 200) + 50,
+      Aurora:  Math.floor(Math.random() * 200) + 50
+    },
+    trendyTematyczne: [
+      { temat: "harmonia",     procent: Math.floor(Math.random() * 20) + 10 },
+      { temat: "ochrona",      procent: Math.floor(Math.random() * 20) + 10 },
+      { temat: "współpraca",   procent: Math.floor(Math.random() * 20) + 10 },
+      { temat: "technologia",  procent: Math.floor(Math.random() * 20) + 10 },
+      { temat: "natura",       procent: Math.floor(Math.random() * 20) + 10 }
+    ],
+    wzorceCzasowe: {
+      "00": Math.floor(Math.random() * 50),
+      "06": Math.floor(Math.random() * 50),
+      "12": Math.floor(Math.random() * 50),
+      "18": Math.floor(Math.random() * 50)
+    },
+    heatmapaEmocji: {
+      radość:   Math.random(),
+      smutek:   Math.random(),
+      złość:    Math.random(),
+      spokój:   Math.random(),
+      zdziwienie: Math.random()
+    },
+    prognozy: [
+      { etykieta: "Jutro",     wartosc: Math.floor(Math.random() * 500) + 200 },
+      { etykieta: "Za tydzień", wartosc: Math.floor(Math.random() * 500) + 200 },
+      { etykieta: "Za miesiąc", wartosc: Math.floor(Math.random() * 500) + 200 }
+    ]
+  };
+
   res.json(stats);
 });
 
