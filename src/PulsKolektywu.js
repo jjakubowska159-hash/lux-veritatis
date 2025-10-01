@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-const API = process.env.REACT_APP_API_URL;
 import './App.css';
 
-function PulsKolektywu() {
+const API = process.env.REACT_APP_API_URL;
 
+function PulsKolektywu() {
   const [topQ, setTopQ]   = useState([]);
   const [popI, setPopI]   = useState([]);
   const [hourA, setHourA] = useState([]);
 
-  useEffect(()=>{                       // pobierz statystyki
+  useEffect(() => {
     Promise.all([
-      fetch(`${process.env.REACT_APP_API_URL}/api/top-words`).then(r=>r.json()),
-      fetch(`${process.env.REACT_APP_API_URL}/api/popular-istoty`).then(r=>r.json()),
-      fetch(`${process.env.REACT_APP_API_URL}/api/hourly-activity`).then(r=>r.json())
-    ]).then(([q,i,h])=>{ setTopQ(q); setPopI(i); setHourA(h); })
-      .catch(console.error);
-  },[]);
+      fetch(`${API}/api/top-words`).then(r => r.json()),
+      fetch(`${API}/api/popular-istoty`).then(r => r.json()),
+      fetch(`${API}/api/hourly-activity`).then(r => r.json())
+    ]).then(([q, i, h]) => {
+      setTopQ(q); setPopI(i); setHourA(h);
+    }).catch(console.error);
+  }, []);
 
   // Stan kompontu przechowujący różne kategorie danych analitycznych
   const [pulsData, setPulsData] = useState({
