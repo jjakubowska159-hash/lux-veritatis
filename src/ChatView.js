@@ -5,15 +5,14 @@ import claudeService from "./services/claudeService.js";
 import ISTOTY from "./istotyConfig.js";
 import { zapiszRozmowe, odczytajRozmowe } from "./cryptoStorage.js";
 
-await fetch(`${process.env.REACT_APP_API_URL}/api/live-add`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ istota: istotaKey, tresc: input })
-});
+
 
 function ChatView() {
   const { istotaKey } = useParams();
   const navigate = useNavigate();
+
+  const API = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+
 
   const istota = useMemo(() => ISTOTY[istotaKey], [istotaKey]);
   const theme = istota?.theme ?? {};
@@ -272,14 +271,21 @@ function ChatView() {
   }
 
   // Wysyłanie wiadomości
-  const sendMessage = async () => {
+  const sendMessage = async (e) => {
+    e?.preventDefault?.(); // blokada przeładowania formularza
     if (!input.trim() || isLoading) return;
 
     const userMsg = { sender: "user", content: input.trim(), ts: Date.now() };
     setMessages((prev) => [...prev, userMsg]);
 
+    await fetch(`${API}/api/live-add`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ istota: istotaKey, tresc: input.trim() })
+    });
+
     try {
-      await fetch("http://localhost:4000/zapiszRozmowe", {
+      await fetch(`${API}/zapiszRozmowe`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -288,10 +294,9 @@ function ChatView() {
         }),
       });
     } catch (e) {
-      console.error("📡 Nie udało się połączyć z backendem:", e);
+      console.error("❌ Nie udało się połączyć z backendem:", e);
     }
 
-    addRecord('anonim', istotaKey, input);
     setInput("");
     setIsLoading(true);
 
@@ -822,9 +827,20 @@ function ChatView() {
             25%, 75% { opacity: 0.8; }
           }
         `}
-      </style>
-    </div>
-  );
+        </style>
+        {/* === INPUT BAR (NOWE) === */}
+        <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8, padding: 12 }}>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Napisz wiadomość…"
+            disabled={isLoading}
+            style={{ flex: 1, padding: 8 }}
+          />
+          <button type="submit" disabled={isLoading}>Wyślij</button>
+        </form>
+        </div>
+        );
 }
 
 export default ChatView;
