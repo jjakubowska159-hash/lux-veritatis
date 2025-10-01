@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import claudeService from "./services/claudeService.js";
 import ISTOTY from "./istotyConfig.js";
+import { addRecord } from './service.js';
 import { zapiszRozmowe, odczytajRozmowe } from "./cryptoStorage.js";
 
 function ChatView() {
@@ -285,6 +286,7 @@ function ChatView() {
       console.error("📡 Nie udało się połączyć z backendem:", e);
     }
 
+    addRecord('anonim', istotaKey, input);
     setInput("");
     setIsLoading(true);
 
