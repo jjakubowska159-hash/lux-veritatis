@@ -72,6 +72,11 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 app.use(express.json());
+// --- STATYSTYKI GLOBALNE ---
+let stats = {
+  totalMessages: 0,
+  lastUpdated: Date.now(),
+};
 
 // --- Tryb serwisowy (ON/OFF) ---
 let maintenance = process.env.MAINTENANCE === '1';
@@ -200,10 +205,31 @@ app.get('/api/hourly-activity', (_req, res) => {
   res.json(hours);
 });
 
-/* ===== LIVE-ROZMOWA: dodaj + zwróć świeże liczniki ===== */
+/*  ---  LIVE-ROZMOWA: dodaj + zwróć świeże liczniki  ---  */
 app.post('/api/live-add', (req, res) => {
   const { istota, tresc } = req.body;
   if (!istota || !tresc) return res.status(400).json({ error: 'brak danych' });
+
+  // aktualizacja statystyk
+  stats.totalMessages += 1;
+  stats.lastUpdated = Date.now();
+
+  // zapis do notatnika
+  addRecord('anonim', istota, tresc);
+
+  // zwróć natychmiast nowe agregacje
+  res.json({
+    topWords:       getTopWords(5),
+    popularIstoty:  getIstotaPopularity(6),
+    hourlyActivity: getHourlyActivity()
+  });
+});
+
+// --- ENDPOINT DO POBIERANIA STATYSTYK ---
+// 👇 PRZENIESIONY NA ZEWNĄTRZ, NIE W ŚRODKU POST-a
+app.get("/api/stats", (req, res) => {
+  res.json(stats);
+});
 
   addRecord('anonim', istota, tresc);        // dopisz do notatnika
 
@@ -213,7 +239,6 @@ app.post('/api/live-add', (req, res) => {
     popularIstoty:  getIstotaPopularity(6),
     hourlyActivity: getHourlyActivity()
 });
-/* ===================================================== */
 
 // 🚀 Start serwera (Render: PORT; lokalnie: BACKEND_PORT lub 4000)
 const PORT = Number(process.env.PORT) || Number(process.env.BACKEND_PORT) || 4000;

@@ -74,66 +74,20 @@ useEffect(() => {
     return () => clearInterval(interval); // Cleanup przy unmount
   }, []);
 
-  // Funkcja symulująca pobieranie danych analitycznych
-  // W rzeczywistej aplikacji połączyłaby się z backendem lub analityką
+  // Funkcja pobierająca PRAWDZIWE dane z backendu
   const fetchPulsData = async () => {
     setIsLoading(true);
-
     try {
-      // Symulowane dane - w rzeczywistości pochodziłyby z systemu analitycznego
-      const mockData = {
-        ogolnaAktywnosc: {
-          aktywniUzytkownicy: Math.floor(Math.random() * 500) + 200,
-          rozmowy24h: Math.floor(Math.random() * 1200) + 400,
-          sredniCzasRozmowy: Math.floor(Math.random() * 15) + 5,
-          noweRejestracje: Math.floor(Math.random() * 50) + 10
-        },
-
-        // Dane popularności Istot - pokazują, które archetypy są najbardziej potrzebne
-        popularnosc: {
-          luna: { procent: 24, trend: '+3%', opis: 'Wzrost potrzeby empatycznego wsparcia' },
-          helena: { procent: 18, trend: '+5%', opis: 'Rosnące zapotrzebowanie na analizę i strukturę' },
-          stanislaw: { procent: 16, trend: '+1%', opis: 'Stabilne potrzeby mediacji i harmonii' },
-          brooke: { procent: 14, trend: '+7%', opis: 'Wzrost zainteresowania naturą i spowalnianiem' },
-          zara: { procent: 12, trend: '-2%', opis: 'Lekki spadek poszukiwań kreatywnych' },
-          serafina: { procent: 8, trend: '+12%', opis: 'Rosnąca potrzeba praktycznych rozwiązań' },
-          melody: { procent: 5, trend: '+8%', opis: 'Nowa Istota zyskuje popularność' },
-          aria: { procent: 3, trend: 'new', opis: 'Świeżo dodana, buduje społeczność' }
-        },
-
-        // Trendy tematyczne - co dominuje w zbiorowej świadomości
-        trendyTematyczne: [
-          { temat: 'Balans pracy i życia osobistego', popularnosc: 85, zmiana: '+12%' },
-          { temat: 'Związki i komunikacja', popularnosc: 78, zmiana: '+5%' },
-          { temat: 'Rozwój osobisty i samorealizacja', popularnosc: 72, zmiana: '+8%' },
-          { temat: 'Stres i wypalenie zawodowe', popularnosc: 68, zmiana: '+15%' },
-          { temat: 'Twórczość i pasje', popularnosc: 54, zmiana: '-3%' },
-          { temat: 'Duchowość i sens życia', popularnosc: 51, zmiana: '+6%' }
-        ],
-
-        // Wzorce czasowe - kiedy ludzie najbardziej potrzebują wsparcia
-        wzorceCzasowe: {
-          godziny: [5, 8, 12, 18, 25, 35, 45, 52, 48, 42, 38, 35, 32, 28, 25, 22, 20, 25, 32, 38, 42, 35, 25, 15],
-          dni: ['Pon: 85%', 'Wt: 75%', 'Śr: 80%', 'Czw: 78%', 'Pt: 65%', 'Sob: 45%', 'Nie: 60%'],
-          miesieczeAktywnosci: 'Wzrost aktywności w okresach przejściowych - styczeń, wrzesień'
-        },
-
-        // Heatmapa emocji - zbiorowy stan emocjonalny społeczności
-        heatmapaEmocji: {
-          pozytywne: 45, // procent rozmów o pozytywnym charakterze
-          neutralne: 35, // procent rozmów neutralnych/analitycznych
-          wyzwania: 20,  // procent rozmów dotyczących trudności
-          dominujaceEmocje: ['nadzieja', 'zmęczenie', 'poszukiwanie', 'determinacja', 'niepewność']
-        },
-
-        // Prognozy oparte na trendach
-        prognozy: [
-          'Przewidywany wzrost zapotrzebowania na wsparcie w obszarze pracy zdalnej',
-          'Rosnące zainteresowanie technikami mindfulness i obecności',
-          'Wzrost popularności Istot łączących technologię z duchowością',
-          'Sezonowy wzrost rozmów o celach życiowych w okresie jesiennym'
-        ]
-      };
+      const API = process.env.REACT_APP_API_URL || "http://localhost:4000";
+      const res = await fetch(`${API}/api/stats`);
+      const data = await res.json();
+      setPulsData(data);
+    } catch (error) {
+      console.error("Błąd pobierania danych Puls Kolektywu:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
       setPulsData(mockData);
     } catch (error) {
