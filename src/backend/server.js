@@ -205,7 +205,7 @@ app.get('/api/hourly-activity', (_req, res) => {
   res.json(hours);
 });
 
-/*  ---  LIVE-ROZMOWA: dodaj + zwróć świeże liczniki  ---  */
+// endpoint do dodawania wiadomości
 app.post('/api/live-add', (req, res) => {
   const { istota, tresc } = req.body;
   if (!istota || !tresc) return res.status(400).json({ error: 'brak danych' });
@@ -214,16 +214,20 @@ app.post('/api/live-add', (req, res) => {
   stats.totalMessages += 1;
   stats.lastUpdated = Date.now();
 
-  // zapis do notatnika
   addRecord('anonim', istota, tresc);
 
-  // zwróć natychmiast nowe agregacje
   res.json({
     topWords:       getTopWords(5),
     popularIstoty:  getIstotaPopularity(6),
     hourlyActivity: getHourlyActivity()
   });
 });
+
+// --- ENDPOINT DO POBIERANIA STATYSTYK ---
+app.get("/api/stats", (req, res) => {
+  res.json(stats);
+});
+
 
 // --- ENDPOINT DO POBIERANIA STATYSTYK ---
 app.get("/api/stats", (req, res) => {
