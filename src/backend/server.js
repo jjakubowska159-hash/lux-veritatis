@@ -9,6 +9,43 @@ import { fileURLToPath } from 'node:url';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 
+// ===== PAMIĘĆ SERWERA (live dane) =====
+const records = [];
+// notatnik: [{ts, userId, istota, tresc}, ...]
+function addRecord(userId, istota, tresc) {
+  records.push({ ts: new Date(), userId, istota, tresc });
+}
+
+function getTopWords(limit = 5) {
+  const freq = {};
+  records.forEach(r => {
+    (r.tresc.toLowerCase().match(/\b(\w{4,})\b/g) || []).forEach(w => {
+      freq[w] = (freq[w]||0)+1;
+    });
+  });
+  return Object.entries(freq)
+               .sort((a,b)=>b[1]-a[1])
+               .slice(0,limit)
+               .map(([w])=>w);
+}
+
+function getIstotaPopularity(topN = 6) {
+  const map = {};
+  records.forEach(r => { map[r.istota] = (map[r.istota]||0)+1; });
+  const total = records.length || 1;
+  return Object.entries(map)
+               .sort((a,b)=>b[1]-a[1])
+               .slice(0,topN)
+               .map(([k,v]) => ({istota:k, procent:Math.round(v/total*100)}));
+}
+
+function getHourlyActivity() {
+  const hrs = Array(24).fill(0);
+  records.forEach(r => { hrs[new Date(r.ts).getHours()]++; });
+  return hrs;
+}
+
+
 dotenv.config();
 
 const app = express();
@@ -161,6 +198,20 @@ app.get('/api/hourly-activity', (_req, res) => {
   const hours = Array(24).fill(0);
   records.forEach(r => { hours[new Date(r.ts).getHours()]++; });
   res.json(hours);
+});
+
+/* ===== LIVE-ROZMOWA: dodaj + zwróć świeże liczniki ===== */
+app.post('/api/live-add', (req, res) => {
+  const { istota, tresc } = req.body;
+  if (!istota || !tresc) return res.status(400).json({ error: 'brak danych' });
+
+  addRecord('anonim', istota, tresc);        // dopisz do notatnika
+
+  // zwróć natychmiast nowe agregacje
+  res.json({
+    topWords:       getTopWords(5),
+    popularIstoty:  getIstotaPopularity(6),
+    hourlyActivity: getHourlyActivity()
 });
 /* ===================================================== */
 
