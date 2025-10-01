@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import claudeService from './claudeService';
+import claudeService from './claudeService.js';
 import './App.css';
 
 function ChatZSerafina() {

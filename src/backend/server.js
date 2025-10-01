@@ -6,6 +6,8 @@ import path from 'node:path';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'node:url';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
 
 dotenv.config();
 
@@ -21,6 +23,16 @@ app.use(cors({
   origin: FRONTEND_ORIGIN === '*' ? true : FRONTEND_ORIGIN,
   credentials: true
 }));
+
+// bezpieczne nagłówki + rate-limit
+app.use(helmet());
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.use('/api', limiter);
 
 app.use(express.json());
 
@@ -60,8 +72,12 @@ app.post('/zapiszRozmowe', (req, res) => {
   }
 });
 
-// 📖 Odczyt rozmów
-app.get('/rozmowy', (_req, res) => {
+// 📖 Odczyt rozmów – tylko z kluczem
+const ROZMOWY_KEY = process.env.ROZMOWY_KEY || 'temp-123-change-me';
+app.get('/rozmowy', (req, res) => {
+  if (req.headers['x-klucz'] !== ROZMOWY_KEY) {
+    return res.status(401).json({ error: 'Brak klucza' });
+  }
   const plik = path.join(__dirname, 'rozmowy.log');
   try {
     if (!fs.existsSync(plik)) return res.json({ status: 'OK', rozmowy: [] });
@@ -112,6 +128,41 @@ app.post('/admin/maintenance', (req, res) => {
   maintenance = !!on;
   res.json({ maintenance });
 });
+
+/* ===== NOWE ENDPOINTY DLA APLIKACJI (statystyki) ===== */
+// 1) Najczęstsze słowa z pytań
+app.get('/api/top-words', (_req, res) => {
+  const freq = {};
+  records.forEach(r => {
+    const words = r.tresc.toLowerCase().match(/\b(\w{4,})\b/g) || [];
+    words.forEach(w => { freq[w] = (freq[w]||0)+1; });
+  });
+  const top = Object.entries(freq)
+                    .sort((a,b)=>b[1]-a[1])
+                    .slice(0,5)
+                    .map(([w])=>w);
+  res.json(top);
+});
+
+// 2) Popularność Istot (procent)
+app.get('/api/popular-istoty', (_req, res) => {
+  const map = {};
+  records.forEach(r => { map[r.istota] = (map[r.istota]||0)+1; });
+  const total = records.length || 1;
+  const sorted = Object.entries(map)
+                       .sort((a,b)=>b[1]-a[1])
+                       .slice(0,6)
+                       .map(([k,v]) => ({istota:k, procent:Math.round(v/total*100)}));
+  res.json(sorted);
+});
+
+// 3) Aktywność 24-godzinna (liczba rozmów w każdej godzinie)
+app.get('/api/hourly-activity', (_req, res) => {
+  const hours = Array(24).fill(0);
+  records.forEach(r => { hours[new Date(r.ts).getHours()]++; });
+  res.json(hours);
+});
+/* ===================================================== */
 
 // 🚀 Start serwera (Render: PORT; lokalnie: BACKEND_PORT lub 4000)
 const PORT = Number(process.env.PORT) || Number(process.env.BACKEND_PORT) || 4000;

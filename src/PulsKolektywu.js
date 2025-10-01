@@ -1,8 +1,23 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+const API = process.env.REACT_APP_API_URL;
 import './App.css';
 
 function PulsKolektywu() {
+
+  const [topQ, setTopQ]   = useState([]);
+  const [popI, setPopI]   = useState([]);
+  const [hourA, setHourA] = useState([]);
+
+  useEffect(()=>{                       // pobierz statystyki
+    Promise.all([
+      fetch(`${process.env.REACT_APP_API_URL}/api/top-words`).then(r=>r.json()),
+      fetch(`${process.env.REACT_APP_API_URL}/api/popular-istoty`).then(r=>r.json()),
+      fetch(`${process.env.REACT_APP_API_URL}/api/hourly-activity`).then(r=>r.json())
+    ]).then(([q,i,h])=>{ setTopQ(q); setPopI(i); setHourA(h); })
+      .catch(console.error);
+  },[]);
+
   // Stan kompontu przechowujący różne kategorie danych analitycznych
   const [pulsData, setPulsData] = useState({
     // Podstawowe metryki aktywności - pokazują ogólny "puls życia" w Ogrodzie
@@ -31,6 +46,20 @@ function PulsKolektywu() {
 
   const [activeView, setActiveView] = useState('overview'); // Kontroluje aktywny widok
   const [isLoading, setIsLoading] = useState(true); // Stan ładowania danych
+  /* ===== NOWE DANE Z SERWERA ===== */
+const [topWords, setTopWords] = useState([]);
+const [popIst, setPopIst]     = useState([]);
+const [hourAct, setHourAct]   = useState([]);
+
+useEffect(() => {
+  Promise.all([
+    fetch(`${API}/api/top-words`).then(r => r.json()),
+    fetch(`${API}/api/popular-istoty`).then(r => r.json()),
+    fetch(`${API}/api/hourly-activity`).then(r => r.json())
+  ]).then(([w, i, h]) => { setTopWords(w); setPopIst(i); setHourAct(h); })
+    .catch(console.error);
+}, []);
+/* =============================== */
 
   // Hook lifecycle - pobiera dane przy pierwszym załadowaniu komponentu
   useEffect(() => {
@@ -574,6 +603,43 @@ function PulsKolektywu() {
       {/* Main Content */}
       <div style={{ padding: '40px 20px', minHeight: '500px' }}>
         {!isLoading && renderActiveView()}
+
+        {/* NOWE BLOKI – PRAWDZIWE DANE Z SERWERA */}
+        <div style={{ marginTop: 40 }}>
+          <h3 style={{ color: '#8B4A9C' }}>🔥 Najczęstsze słowa</h3>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {topWords.map(w => (
+              <span key={w} style={{ background: 'rgba(139,74,156,.2)', padding: '5px 12px', borderRadius: 15, fontSize: 14 }}>{w}</span>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginTop: 40 }}>
+          <h3 style={{ color: '#8B4A9C' }}>👥 Popularność Istot</h3>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,140px)', gap: 12 }}>
+            {popIst.map(({ istota, procent }) => (
+              <div key={istota} style={{ background: 'rgba(255,255,255,.1)', padding: 12, borderRadius: 10, textAlign: 'center' }}>
+                <b>{istota}</b>
+                <div style={{ fontSize: 18 }}>{procent}%</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ marginTop: 40 }}>
+          <h3 style={{ color: '#8B4A9C' }}>⏰ Aktywność 24-godzinna</h3>
+          <div style={{ display: 'flex', alignItems: 'end', height: 100, gap: 2 }}>
+            {hourAct.map((h, i) => (
+              <div key={i} title={`${i}:00 – ${h} rozmów`} style={{
+                flex: 1, background: 'linear-gradient(to top,#8B4A9C,rgba(139,74,156,.4))',
+                height: `${Math.max(4, h * 3)}px`, borderRadius: '2px 2px 0 0'
+              }} />
+            ))}
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, opacity: .7, marginTop: 4 }}>
+            <span>00</span><span>06</span><span>12</span><span>18</span><span>23</span>
+          </div>
+        </div>
       </div>
 
       {/* Footer Info */}
