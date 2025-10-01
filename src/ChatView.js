@@ -3,8 +3,13 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import claudeService from "./services/claudeService.js";
 import ISTOTY from "./istotyConfig.js";
-import { addRecord } from './service.js';
 import { zapiszRozmowe, odczytajRozmowe } from "./cryptoStorage.js";
+
+await fetch(`${process.env.REACT_APP_API_URL}/api/live-add`, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ istota: istotaKey, tresc: input })
+});
 
 function ChatView() {
   const { istotaKey } = useParams();
