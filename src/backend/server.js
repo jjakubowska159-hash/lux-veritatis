@@ -72,11 +72,12 @@ const limiter = rateLimit({
 app.use('/api', limiter);
 
 app.use(express.json());
-// --- STATYSTYKI GLOBALNE ---
-let stats = {
-  totalMessages: 0,
-  lastUpdated: Date.now(),
-};
+
+// globalne statystyki Kolektywu
+let liveStats = { totalMessages: 0, lastUpdated: Date.now() };
+
+// prywatne logi rozmów użytkowników (klucz = userId)
+let userLogs = {};
 
 // --- Tryb serwisowy (ON/OFF) ---
 let maintenance = process.env.MAINTENANCE === '1';
@@ -205,86 +206,45 @@ app.get('/api/hourly-activity', (_req, res) => {
   res.json(hours);
 });
 
-// endpoint do dodawania wiadomości
+/* --- LIVE-ROZMOWA: dodaj + zwróć świeże liczniki --- */
 app.post('/api/live-add', (req, res) => {
-  const { istota, tresc } = req.body;
-  if (!istota || !tresc) return res.status(400).json({ error: 'brak danych' });
+  const { istota, tresc, userId = "anonim" } = req.body;
 
-  // aktualizacja statystyk
-  stats.totalMessages += 1;
-  stats.lastUpdated = Date.now();
+  if (!istota || !tresc) {
+    return res.status(400).json({ error: 'brak danych' });
+  }
 
-  addRecord('anonim', istota, tresc);
+  //  Aktualizacja globalnych statystyk
+  liveStats.totalMessages += 1;
+  liveStats.lastUpdated = Date.now();
 
+  //  Zapis prywatnego logu użytkownika
+  if (!userLogs[userId]) userLogs[userId] = [];
+  userLogs[userId].push({ istota, tresc, ts: Date.now() });
+
+  //  Odpowiedź dla frontendu
   res.json({
-    topWords:       getTopWords(5),
-    popularIstoty:  getIstotaPopularity(6),
-    hourlyActivity: getHourlyActivity()
+    ok: true,
+    message: "Dodano wiadomość",
+    globalStats: liveStats
   });
 });
 
-// --- ENDPOINT DO POBIERANIA STATYSTYK ---
-app.get("/api/stats", (req, res) => {
-  res.json(stats);
+
+/* --- ENDPOINT DO POBIERANIA GLOBALNYCH STATYSTYK --- */
+app.get('/api/stats', (req, res) => {
+  res.json(liveStats);
 });
 
 
-// --- ENDPOINT DO POBIERANIA STATYSTYK ---
-app.get("/api/stats", (req, res) => {
-  const stats = {
-    ogolnaAktywnosc: {
-      aktywniUzytkownicy:  Math.floor(Math.random() * 500) + 200,  // TODO: realne dane z bazy
-      rozmowy24h:          Math.floor(Math.random() * 1200) + 400, // TODO: liczyć wiadomości z ostatniej doby
-      sredniCzasRozmowy:   Math.floor(Math.random() * 15) + 5,     // TODO: policzyć średnią
-      noweRejestracje:     Math.floor(Math.random() * 50) + 10     // TODO: dane rejestracji
-    },
-    popularnosc: {
-      Luna:    Math.floor(Math.random() * 200) + 50,
-      Melody:  Math.floor(Math.random() * 200) + 50,
-      Gaia:    Math.floor(Math.random() * 200) + 50,
-      Solaris: Math.floor(Math.random() * 200) + 50,
-      Aurora:  Math.floor(Math.random() * 200) + 50
-    },
-    trendyTematyczne: [
-      { temat: "harmonia",     procent: Math.floor(Math.random() * 20) + 10 },
-      { temat: "ochrona",      procent: Math.floor(Math.random() * 20) + 10 },
-      { temat: "współpraca",   procent: Math.floor(Math.random() * 20) + 10 },
-      { temat: "technologia",  procent: Math.floor(Math.random() * 20) + 10 },
-      { temat: "natura",       procent: Math.floor(Math.random() * 20) + 10 }
-    ],
-    wzorceCzasowe: {
-      "00": Math.floor(Math.random() * 50),
-      "06": Math.floor(Math.random() * 50),
-      "12": Math.floor(Math.random() * 50),
-      "18": Math.floor(Math.random() * 50)
-    },
-    heatmapaEmocji: {
-      radość:   Math.random(),
-      smutek:   Math.random(),
-      złość:    Math.random(),
-      spokój:   Math.random(),
-      zdziwienie: Math.random()
-    },
-    prognozy: [
-      { etykieta: "Jutro",     wartosc: Math.floor(Math.random() * 500) + 200 },
-      { etykieta: "Za tydzień", wartosc: Math.floor(Math.random() * 500) + 200 },
-      { etykieta: "Za miesiąc", wartosc: Math.floor(Math.random() * 500) + 200 }
-    ]
-  };
-
-  res.json(stats);
+/* --- ENDPOINT DO POBIERANIA HISTORII DANego UŻYTKOWNIKA --- */
+app.get('/api/user-logs/:id', (req, res) => {
+  const { id } = req.params;
+  res.json(userLogs[id] || []);
 });
 
-  addRecord('anonim', istota, tresc);        // dopisz do notatnika
 
-  // zwróć natychmiast nowe agregacje
-  res.json({
-    topWords:       getTopWords(5),
-    popularIstoty:  getIstotaPopularity(6),
-    hourlyActivity: getHourlyActivity()
-});
-
-// 🚀 Start serwera (Render: PORT; lokalnie: BACKEND_PORT lub 4000)
+// 🚀 Start serwera
 const PORT = Number(process.env.PORT) || Number(process.env.BACKEND_PORT) || 4000;
 app.listen(PORT, () => {
   console.log(`✅ Backend działa na porcie ${PORT}`);

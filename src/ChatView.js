@@ -281,7 +281,7 @@ function ChatView() {
     await fetch(`${API}/api/live-add`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ istota: istotaKey, tresc: input.trim() })
+      body: JSON.stringify({ istota: istotaKey, tresc: input.trim(), userId: "anonim" })
     });
 
     try {
@@ -827,20 +827,9 @@ function ChatView() {
             25%, 75% { opacity: 0.8; }
           }
         `}
-        </style>
-        {/* === INPUT BAR (NOWE) === */}
-        <form onSubmit={sendMessage} style={{ display: 'flex', gap: 8, padding: 12 }}>
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Napisz wiadomość…"
-            disabled={isLoading}
-            style={{ flex: 1, padding: 8 }}
-          />
-          <button type="submit" disabled={isLoading}>Wyślij</button>
-        </form>
-        </div>
-        );
+      </style>
+    </div>
+  );
 }
 
 export default ChatView;

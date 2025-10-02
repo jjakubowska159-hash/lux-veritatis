@@ -79,8 +79,12 @@ useEffect(() => {
     setIsLoading(true);
     try {
       const API = process.env.REACT_APP_API_URL || "http://localhost:4000";
+
+      // 🔹 pobieramy globalne statystyki
       const res = await fetch(`${API}/api/stats`);
       const data = await res.json();
+
+      // 🔹 aktualizujemy stan Reacta
       setPulsData(data);
     } catch (error) {
       console.error("Błąd pobierania danych Puls Kolektywu:", error);
@@ -88,6 +92,7 @@ useEffect(() => {
       setIsLoading(false);
     }
   };
+
 
   // Funkcja pomocnicza do formatowania liczb z separatorami
   const formatNumber = (num) => {
